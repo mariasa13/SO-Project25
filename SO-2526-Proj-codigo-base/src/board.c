@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <stdarg.h>
 
+//APAGAR DEPOIS
+
 FILE * debugfile;
 
 // Helper private function to find and kill pacman at specific position
