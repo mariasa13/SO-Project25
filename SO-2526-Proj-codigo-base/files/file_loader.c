@@ -9,8 +9,8 @@
 
 // Helper function to check if a string ends with a given suffix
 int ends_with(const char* str, const char* suffix) {
-    size_t str_len = strlen(str);
-    size_t suffix_len = strlen(suffix);
+    int str_len = strlen(str);
+    int suffix_len = strlen(suffix);
     if (str_len < suffix_len) return 0;
     return strcmp(str + str_len - suffix_len, suffix) == 0;
 }
@@ -60,9 +60,10 @@ int next_level(level_manager_t* manager) {
 int read_word(int fd, char* buffer, int max_size) {
     int i = 0;
     char c;
-    
+    int n;
+
     // Skip whitespace and comments
-    while (read(fd, &c, 1) == 1) {
+    while ((n = read(fd, &c, 1)) == 1) {
         if (c == '#') {
             // Skip comment line
             while (read(fd, &c, 1) == 1 && c != '\n');
@@ -70,18 +71,25 @@ int read_word(int fd, char* buffer, int max_size) {
         }
         if (!isspace(c)) break;
     }
-    
+
+    if (n != 1) {
+        buffer[0] = '\0';
+        return 0; // EOF
+    }
+
     // Read word
     do {
         buffer[i++] = c;
         if (i >= max_size - 1) break;
     } while (read(fd, &c, 1) == 1 && !isspace(c));
-    
+
     buffer[i] = '\0';
     return i;
 }
 
 int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* pos_x, int* pos_y) {
+    printf("[DEBUG] Entrei em read_behavior_file com %s\n", filepath);
+
     int fd = open(filepath, O_RDONLY);
     if (fd < 0) {
         debug("Error: Could not open behavior file %s\n", filepath);
@@ -96,11 +104,14 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
         if (strcmp(word, "PASSO") == 0) {
             read_word(fd, word, sizeof(word));
             *passo = atoi(word);
+            printf("passo do monstro%s\n", word);
         } else if (strcmp(word, "POS") == 0) {
             read_word(fd, word, sizeof(word));
             *pos_y = atoi(word);
             read_word(fd, word, sizeof(word));
             *pos_x = atoi(word);
+            printf("pos do monstro%s\n", word);
+            printf("[DEBUG] pos do monstro: y=%d, x=%d\n", *pos_y, *pos_x);
         } else if (strlen(word) == 1 && n_moves < MAX_MOVES) {
             // Single character command
             char cmd = word[0];
@@ -109,6 +120,7 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
                 moves[n_moves].turns = 1;
                 moves[n_moves].turns_left = 1;
                 n_moves++;
+            printf("[DEBUG] Comando carregado: %c (turns=1)\n", cmd);
             } else if (cmd == 'T') {
                 // T command needs a number
                 read_word(fd, word, sizeof(word));
@@ -116,17 +128,18 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
                 moves[n_moves].command = 'T';
                 moves[n_moves].turns = turns;
                 moves[n_moves].turns_left = turns;
+                printf("[DEBUG] Comando carregado: T (turns=%d)\n", turns);
                 n_moves++;
             }
         }
     }
 
     close(fd);
+    printf("fim da funcao read behaviour");
     return n_moves;
 }
 
 int load_level_from_file(board_t* board, level_manager_t* manager, int accumulated_points) {
-    //memset(board, 0, sizeof(board_t));
     if (manager->current_level >= manager->n_levels) {
         return -1;
     }
@@ -160,6 +173,7 @@ int load_level_from_file(board_t* board, level_manager_t* manager, int accumulat
         } else if (strcmp(word, "PAC") == 0) {
             read_word(fd, board->pacman_file, sizeof(board->pacman_file));
         } else if (strcmp(word, "MON") == 0) {
+            printf("[DEBUG] Depois do lvl: n_ghosts = %d\n", board->n_ghosts);
             // Read monster filenames until we hit a non-filename
             while (read_word(fd, word, sizeof(word)) > 0) {
                 if (ends_with(word, ".m")) {
@@ -266,7 +280,6 @@ int load_level_from_file(board_t* board, level_manager_t* manager, int accumulat
     for (int i = 0; i < board->n_ghosts; i++) {
         char ghost_path[MAX_FILENAME * 2];
         snprintf(ghost_path, sizeof(ghost_path), "%s/%s", manager->directory, board->ghosts_files[i]);
-        
         int pos_x, pos_y;
         board->ghosts[i].n_moves = read_behavior_file(ghost_path, board->ghosts[i].moves, 
                                                       &board->ghosts[i].passo, &pos_x, &pos_y);

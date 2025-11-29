@@ -1,65 +1,50 @@
+Found 1 level files:
+  - prim.lvl
+Loaded level: prim.lvl (dimensions: 6x6, tempo: 10)
 KEY D
 REFRESH
-KEY A
-REFRESH
 KEY D
-REFRESH
-KEY A
 REFRESH
 KEY S
-REFRESH
-KEY D
-REFRESH
-KEY A
 REFRESH
 KEY W
-REFRESH
-KEY D
-REFRESH
-KEY D
-REFRESH
-KEY D
-REFRESH
-KEY D
-REFRESH
-KEY D
-REFRESH
-KEY D
-REFRESH
-KEY D
-REFRESH
-KEY S
-REFRESH
-KEY A
-REFRESH
-KEY A
-REFRESH
-KEY A
-REFRESH
-KEY A
 REFRESH
 KEY W
 REFRESH
 KEY A
 REFRESH
+KEY W
+REFRESH
+KEY S
+REFRESH
 KEY A
 REFRESH
 KEY S
+REFRESH
+KEY S
+REFRESH
+KEY S
+REFRESH
+KEY D
+REFRESH
+KEY D
+REFRESH
+KEY A
 Killing 0 pacman
 
 REFRESH
-=== [58322] LEVEL INFO ===
-Dimensions: 5 x 10
+=== [152927] LEVEL INFO ===
+Dimensions: 6 x 6
 Tempo: 10
 Pacman file: 
-Monster files (2):
-  - 
-  - 
+Monster files (1):
+  - m1.m
 
 === BOARD ===
-WWWWWWWWWW
-W        W
-W M      W
-W       MW
-W        W
+WW WWW
+W   WW
+W W WW
+W    W
+W M  W
+WWWWWW
 ==================
