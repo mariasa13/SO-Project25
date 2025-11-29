@@ -8,12 +8,13 @@ SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 INCLUDE_DIR = include
+FILES_DIR = files
 
 # executable 
 TARGET = Pacmanist
 
 # Objects variables
-OBJS = game.o display.o board.o
+OBJS = game.o display.o board.o file_loader.o
 
 # Dependencies
 display.o = display.h
@@ -21,7 +22,7 @@ board.o = board.h
 
 # Object files path
 vpath %.o $(OBJ_DIR)
-vpath %.c $(SRC_DIR)
+vpath %.c $(SRC_DIR):$(FILES_DIR)
 
 # Make targets
 all: pacmanist
@@ -33,7 +34,7 @@ $(BIN_DIR)/$(TARGET): $(OBJS) | folders
 
 # dont include LDFLAGS in the end, to allow compilation on macos
 %.o: %.c $($@) | folders
-	$(CC) -I $(INCLUDE_DIR) $(CFLAGS) -o $(OBJ_DIR)/$@ -c $<
+	$(CC) -I $(INCLUDE_DIR) -I $(FILES_DIR) $(CFLAGS) -o $(OBJ_DIR)/$@ -c $<
 
 # run the program
 run: pacmanist

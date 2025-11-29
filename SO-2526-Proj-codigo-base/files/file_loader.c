@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <stdio.h>
 
 // Helper function to check if a string ends with a given suffix
 int ends_with(const char* str, const char* suffix) {
@@ -125,6 +126,7 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
 }
 
 int load_level_from_file(board_t* board, level_manager_t* manager, int accumulated_points) {
+    //memset(board, 0, sizeof(board_t));
     if (manager->current_level >= manager->n_levels) {
         return -1;
     }
