@@ -20,6 +20,7 @@ typedef struct {
     int turns_left;
 } command_t;
 
+
 typedef struct {
     int pos_x, pos_y; //current position
     int alive; // if is alive
@@ -46,6 +47,7 @@ typedef struct {
     int has_dot;    // whether there is a dot in this position or not
     int has_portal; // whether there is a portal in this position or not
 } board_pos_t;
+
 
 typedef struct {
     int width, height;      // dimensions of the board
@@ -98,10 +100,12 @@ void debug(const char * format, ...);
 /*Writes the board and its contents to the open debug file*/
 void print_board(board_t* board);
 
-// Funções importantes para manipulação do board
+
+// Funções de backup
 void copy_board_state(board_t *dst, board_t *src);
-void restore_board_state(board_t *dst, board_t *backup);
-void free_board_backup(board_t *backup);
+void restore_board_state(board_t *dst, board_t *src);
+void free_board_backup(board_t *board);
+
 
 
 #endif

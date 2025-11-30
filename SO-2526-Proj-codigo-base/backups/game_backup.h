@@ -5,11 +5,12 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+// Funções para backup
 void save_game(board_t *game_board);
-void restore_game(board_t *game_board);
+void restore_game(void);
 void free_backup_memory(void);
 
-// Variáveis globais definidas no game_backup.c
+// Variáveis globais do backup
 extern bool backup_exists;
 extern board_t backup;
 extern pid_t backup_pid;

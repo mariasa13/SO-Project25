@@ -22,53 +22,60 @@ void screen_refresh(board_t * game_board, int mode) {
         sleep_ms(game_board->tempo);       
 }
 
-int play_board(board_t * game_board) {
+int play_board(board_t *game_board) {
     pacman_t* pacman = &game_board->pacmans[0];
     command_t* play;
-    if (pacman->n_moves == 0) { // if is user input
-        command_t c; 
+
+    // Receber input
+    if (pacman->n_moves == 0) {
+        command_t c;
         c.command = get_input();
 
-        if(c.command == '\0')
+        if (c.command == '\0')
             return CONTINUE_PLAY;
 
         c.turns = 1;
         play = &c;
-    }
-    else { // else if the moves are pre-defined in the file
-        // avoid buffer overflow wrapping around with modulo of n_moves
-        // this ensures that we always access a valid move for the pacman
-        play = &pacman->moves[pacman->current_move%pacman->n_moves];
+    } else {
+        // Input pré-definido do ficheiro
+        play = &pacman->moves[pacman->current_move % pacman->n_moves];
     }
 
     debug("KEY %c\n", play->command);
 
-    if (play->command == 'Q') {
+    // Sair do jogo
+    if (play->command == 'Q')
         return QUIT_GAME;
+
+    // Guardar backup com 'G' (se ainda não existir)
+    if (play->command == 'G') {
+        if (!backup_exists) {
+            save_game(game_board); // fork() vai criar backup no processo pai
+        }
+        return CONTINUE_PLAY;
     }
 
+    // Mover Pacman
     int result = move_pacman(game_board, 0, play);
-    if (result == REACHED_PORTAL) {
-        // Next level
+    if (result == REACHED_PORTAL)
         return NEXT_LEVEL;
-    }
 
-    if(result == DEAD_PACMAN) {
+    // Verificar morte
+    if (result == DEAD_PACMAN || !pacman->alive) {
+        if (backup_exists) {
+            restore_game(); // retoma do backup
+            return CONTINUE_PLAY;
+        }
         return QUIT_GAME;
     }
-    
+
+    // Mover fantasmas
     for (int i = 0; i < game_board->n_ghosts; i++) {
         ghost_t* ghost = &game_board->ghosts[i];
-        // avoid buffer overflow wrapping around with modulo of n_moves
-        // this ensures that we always access a valid move for the ghost
-        move_ghost(game_board, i, &ghost->moves[ghost->current_move%ghost->n_moves]);
+        move_ghost(game_board, i, &ghost->moves[ghost->current_move % ghost->n_moves]);
     }
 
-    if (!game_board->pacmans[0].alive) {
-        return QUIT_GAME;
-    }      
-
-    return CONTINUE_PLAY;  
+    return CONTINUE_PLAY;
 }
 
 int main(int argc, char** argv) {
