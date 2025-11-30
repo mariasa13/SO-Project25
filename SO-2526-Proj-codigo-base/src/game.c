@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include "file_loader.h"
+#include "game_backup.h"
+
 
 #define CONTINUE_PLAY 0
 #define NEXT_LEVEL 1

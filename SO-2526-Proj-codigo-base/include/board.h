@@ -98,4 +98,10 @@ void debug(const char * format, ...);
 /*Writes the board and its contents to the open debug file*/
 void print_board(board_t* board);
 
+// Funções importantes para manipulação do board
+void copy_board_state(board_t *dst, board_t *src);
+void restore_board_state(board_t *dst, board_t *backup);
+void free_board_backup(board_t *backup);
+
+
 #endif

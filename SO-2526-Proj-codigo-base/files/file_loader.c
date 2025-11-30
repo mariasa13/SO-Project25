@@ -88,7 +88,6 @@ int read_word(int fd, char* buffer, int max_size) {
 }
 
 int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* pos_x, int* pos_y) {
-    printf("[DEBUG] Entrei em read_behavior_file com %s\n", filepath);
 
     int fd = open(filepath, O_RDONLY);
     if (fd < 0) {
@@ -104,14 +103,11 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
         if (strcmp(word, "PASSO") == 0) {
             read_word(fd, word, sizeof(word));
             *passo = atoi(word);
-            printf("passo do monstro%s\n", word);
         } else if (strcmp(word, "POS") == 0) {
             read_word(fd, word, sizeof(word));
             *pos_y = atoi(word);
             read_word(fd, word, sizeof(word));
             *pos_x = atoi(word);
-            printf("pos do monstro%s\n", word);
-            printf("[DEBUG] pos do monstro: y=%d, x=%d\n", *pos_y, *pos_x);
         } else if (strlen(word) == 1 && n_moves < MAX_MOVES) {
             // Single character command
             char cmd = word[0];
@@ -120,7 +116,6 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
                 moves[n_moves].turns = 1;
                 moves[n_moves].turns_left = 1;
                 n_moves++;
-            printf("[DEBUG] Comando carregado: %c (turns=1)\n", cmd);
             } else if (cmd == 'T') {
                 // T command needs a number
                 read_word(fd, word, sizeof(word));
@@ -128,14 +123,12 @@ int read_behavior_file(const char* filepath, command_t* moves, int* passo, int* 
                 moves[n_moves].command = 'T';
                 moves[n_moves].turns = turns;
                 moves[n_moves].turns_left = turns;
-                printf("[DEBUG] Comando carregado: T (turns=%d)\n", turns);
                 n_moves++;
             }
         }
     }
 
     close(fd);
-    printf("fim da funcao read behaviour");
     return n_moves;
 }
 
@@ -173,7 +166,6 @@ int load_level_from_file(board_t* board, level_manager_t* manager, int accumulat
         } else if (strcmp(word, "PAC") == 0) {
             read_word(fd, board->pacman_file, sizeof(board->pacman_file));
         } else if (strcmp(word, "MON") == 0) {
-            printf("[DEBUG] Depois do lvl: n_ghosts = %d\n", board->n_ghosts);
             // Read monster filenames until we hit a non-filename
             while (read_word(fd, word, sizeof(word)) > 0) {
                 if (ends_with(word, ".m")) {

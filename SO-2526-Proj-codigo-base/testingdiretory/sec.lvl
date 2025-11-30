@@ -1,0 +1,12 @@
+# DIM: tamanho da matriz
+DIM 8 10
+# TEMPO: tempo por jogada
+TEMPO 15
+XXXXXXXXXX
+Xoooooo@XX
+XoXXXXooXX
+XooooooXXX
+XoXXXooooX
+XooooXXXXX
+XooooooooX
+XXXXXXXXXX

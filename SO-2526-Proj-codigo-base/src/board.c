@@ -4,8 +4,33 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <string.h>
 
-//APAGAR DEPOIS
+void copy_board_state(board_t *dst, board_t *src) {
+    dst->width = src->width;
+    dst->height = src->height;
+    int total = src->width * src->height;
+    dst->board = malloc(sizeof(char) * total); // ou board_pos_t
+    if (!dst->board) exit(1); // erro de memória
+    memcpy(dst->board, src->board, sizeof(char) * total);
+}
+
+void restore_board_state(board_t *dst, board_t *backup) {
+    // assume que já foi alocada memória em dst
+    dst->width = backup->width;
+    dst->height = backup->height;
+    int total = backup->width * backup->height;
+    if (!dst->board)
+        dst->board = malloc(sizeof(char) * total);
+    memcpy(dst->board, backup->board, sizeof(char) * total);
+}
+
+void free_board_backup(board_t *backup) {
+    if (backup->board) {
+        free(backup->board);
+        backup->board= NULL;
+    }
+}
 
 FILE * debugfile;
 
